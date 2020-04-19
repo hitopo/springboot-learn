@@ -1,0 +1,60 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /simple-shop
+
+
+spring:
+  datasource:
+    # 基本配置
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://127.0.0.1:3306/springboot-vue-crud?characterEncoding=utf8&useUnicode=true
+
+
+  #mybatis配置
+  # 模板设置
+  thymeleaf:
+    prefix: classpath:/templates/
+    check-template-location: true
+    suffix: .html
+    encoding: utf-8
+    mode: HTML
+    cache: false
+
+  # 文件上传设置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
+  # devtools插件
+  devtools:
+    livereload:
+      enabled: true #是否支持livereload
+      port: 35729
+    restart:
+      enabled: true #是否支持热部署
+
+
+  #spring-aop配置
+  aop:
+    #启用@Aspectj注解驱动的切面，允许Spring创建基于类的代理
+    auto: true
+    proxy-target-class: true
+
+    # 应用名
+
+# mybatis-plus插件配置
+mybatis-plus:
+  # 输出sql语句
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+      table-prefix: tb_
+
+
