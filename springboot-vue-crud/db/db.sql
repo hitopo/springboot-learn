@@ -13,9 +13,9 @@ CREATE TABLE tb_user
 
 # 密码是md5加密的，hitopo-hitopo admin-admin
 INSERT INTO tb_user
-VALUES (1, 'hitopo', '900138B41FE83147B6EC170C9339F83E');
+VALUES (1, 'hitopo', '900138b41fe83147b6ec170c9339f83e');
 INSERT INTO tb_user
-VALUES (2, 'admin', '21232F297A57A5A743894A0E4A801FC3');
+VALUES (2, 'admin', '21232f297a57a5a743894a0e4a801fc3');
 
 CREATE TABLE tb_good
 (

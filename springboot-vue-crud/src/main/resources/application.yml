@@ -57,4 +57,3 @@ mybatis-plus:
       id-type: auto
       table-prefix: tb_
 
-

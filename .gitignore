@@ -31,4 +31,4 @@ build/
 .vscode/
 
 ### Rebel ###
-rebel.xml
+**/rebel.xml
