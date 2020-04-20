@@ -29,6 +29,5 @@ public class UserServiceTest {
         User user = new User();
         user.setUsername("ad");
         user.setPassword("asdafs");
-        log.info("login? = {}", userService.login(user));
     }
 }

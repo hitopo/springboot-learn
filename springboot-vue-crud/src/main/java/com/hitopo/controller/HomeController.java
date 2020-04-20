@@ -23,11 +23,11 @@ public class HomeController {
 
 
     /**
-     * 商品列表页
+     * 跳转到商品列表页
      */
     @GetMapping(value = {"/good"})
     public String user() {
-        return "goods";
+        return "site/goods";
     }
 
 

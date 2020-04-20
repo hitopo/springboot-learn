@@ -30,28 +30,31 @@ public class R {
     public R() {
     }
 
-    public R(Integer code, String msg) {
+    private R(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
     }
 
-    public R(Integer code, String msg, Object data) {
+    private R(Integer code, String msg, Object data) {
         this.code = code;
         this.msg = msg;
         this.data = data;
     }
 
+    public static R create(Integer code, String msg) {
+        return new R(code, msg);
+    }
 
-    public static R success(ResultEnum re) {
+    public static R create(Integer code, String msg, Object data) {
+        return new R(code, msg, data);
+    }
+
+    public static R create(ResultEnum re) {
         return new R(re.getCode(), re.getMsg());
     }
 
-    public static R success(ResultEnum re, Object data) {
+    public static R create(ResultEnum re, Object data) {
         return new R(re.getCode(), re.getMsg(), data);
-    }
-
-    public static R error(ResultEnum re) {
-        return new R(re.getCode(), re.getMsg());
     }
 
     public Integer getCode() {

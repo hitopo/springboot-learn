@@ -9,11 +9,17 @@ package com.hitopo.common;
  */
 public enum ResultEnum {
 
+    // 通用返回格式
     SUCCESS(200, "请求成功"),
     CREATED(201, "创建成功"),
     DELETED(204, "删除成功"),
     BAD_REQUEST(400, "请求地址不存在或者包含不支持的参数"),
-    INNER_ERROR(500, "服务器错误");
+    INNER_ERROR(500, "服务器错误"),
+
+    // 自定义返回的错误格式
+    // 用户部分
+    NOT_EXIST_USER_OR_ERROR_PASSWORD(10001, "用户名或者密码错误！"),
+    USERNAME_ALREADY_EXIST(10002, "用户名已经存在！");
 
 
     /**
@@ -24,7 +30,6 @@ public enum ResultEnum {
      * 状态参数
      */
     private String msg;
-
 
     ResultEnum(Integer code, String msg) {
         this.code = code;

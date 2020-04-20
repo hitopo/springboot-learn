@@ -32,12 +32,11 @@ public class LoginController {
     @PostMapping("/login")
     @ResponseBody
     public R login(User user, HttpSession session) {
-        if (userService.login(user)) {
-            // 登录成功
-            session.setAttribute("username", user.getUsername());
-            return R.success(ResultEnum.SUCCESS);
-        }
-        return R.error(ResultEnum.BAD_REQUEST);
+        // 用户登录
+        userService.login(user);
+        // 用户名放进session中
+        session.setAttribute("username", user.getUsername());
+        return R.create(ResultEnum.SUCCESS);
     }
 
     /**
@@ -55,7 +54,8 @@ public class LoginController {
     @PostMapping("/register")
     @ResponseBody
     public R register(User user) {
-        return R.success(ResultEnum.SUCCESS);
+        userService.register(user);
+        return R.create(ResultEnum.CREATED);
     }
 
 

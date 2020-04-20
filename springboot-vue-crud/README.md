@@ -221,9 +221,46 @@ public class R {
 
 # 用户管理
 
-## 用户登录
+## 用户登录检测
 
-用户登录的实现很简单，不细说，重点说一下登录拦截的实现
+用户登录的实现很简单，不细说，重点说一下登录拦截的实现，因为还没学到权限管理的框架，暂时使用Spring AOP简单实现用户的登录与否的验证，如果没有登录的情况下，只能访问部分接口，访问受保护的接口全部重定向到登录界面
+
+```java
+@Aspect
+@Component
+public class LoginInterceptor {
+
+    private final Logger log = LoggerFactory.getLogger(LoginInterceptor.class);
+
+    @Pointcut("within(com.hitopo.controller..*) && !within(com.hitopo.controller.LoginController)")
+    public void pointcut() {
+    }
+
+    @Around("pointcut()")
+    public Object trackInfo(ProceedingJoinPoint joinPoint) throws Throwable {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        String username = (String) request.getSession().getAttribute("username");
+        if (username == null) {
+            log.info("***************用户未登录***************");
+            // 跳转到登录界面
+            attributes.getResponse().sendRedirect(request.getContextPath() + "/login");
+        } else {
+            log.info("***************用户已登录***************");
+        }
+        // 这里一定要返回，否则会导致404错误
+        return joinPoint.proceed();
+    }
+}
+```
+
+`@pointcut`中使用`within`指定了只对外暴露`LoginController`中的接口，而保护所有的其他Controller中定义的接口，在这个切面定义了一个环绕通知，在环绕通知中检查session中是否存在了用户名，是就放行，否则就是强制跳转到登录界面
+
+
+
+## 用户注册
+
+
 
 
 

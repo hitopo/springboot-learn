@@ -16,7 +16,7 @@ new Vue({
     },
     methods: {
         submitForm(register) {
-            if(this.register.repassword !== this.register.password){
+            if (this.register.repassword !== this.register.password) {
                 // 弹出错误信息框
                 this.$emit(
                     'submit-form',
@@ -26,39 +26,40 @@ new Vue({
                         duration: 6000
                     }),
                 );
-                // 清空表单状态
-                this.$refs[register].resetFields();
-            }else{
+            } else {
                 this.$refs[register].validate((valid) => {
                     if (valid) {
                         //提交表单
-                        this.$http.post('/register', {
+                        // TODO：contextPath
+                        this.$http.post('/simple-shop/register', {
                             username: this.register.username,
                             password: this.register.password,
                         }).then(result => {
-                            console.log(result);
-                            // 判断用户是否登录成功，后端返回JSON格式数据，不然娶不到数据
-                            if (result.body.success) {
-                                window.location.href = "/index";
+                            if (result.body.code === 201) {
+                                // 跳转到登录界面
+                                window.location.href = "/simple-shop/login";
+                                this.$message({
+                                    message: '用户注册成功',
+                                    type: 'success',
+                                    duration: 6000
+                                })
                             } else {
                                 // 弹出错误信息框
                                 this.$emit(
                                     'submit-form',
                                     this.$message({
-                                        message: result.body.message,
+                                        message: result.body.msg,
                                         type: 'warning',
                                         duration: 6000
                                     }),
                                 );
-                                // 清空表单状态
-                                this.$refs[register].resetFields();
                             }
                         });
                     } else {
                         this.$emit(
                             'submit-form',
                             this.$message({
-                                message: '输入信息有误！',
+                                message: '请完善信息后再注册！',
                                 type: 'warning',
                                 duration: 6000
                             }),
@@ -68,7 +69,7 @@ new Vue({
                 });
             }
         },
-        registerEnter(register){
+        registerEnter(register) {
             this.submitForm(register);
         }
     }

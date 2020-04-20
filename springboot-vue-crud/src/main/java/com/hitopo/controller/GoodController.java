@@ -5,9 +5,12 @@ import com.hitopo.common.R;
 import com.hitopo.common.ResultEnum;
 import com.hitopo.entity.Good;
 import com.hitopo.service.GoodService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,13 +26,23 @@ import java.util.List;
 @RequestMapping("/good")
 public class GoodController {
 
+    private final Logger log = LoggerFactory.getLogger(GoodController.class);
+
     @Autowired
     private GoodService goodService;
 
-    @GetMapping("/goods")
-    public R goods() {
+    /**
+     * 分页查询商品数据
+     */
+    @GetMapping("/findAll")
+    public R findAll(Good good,
+                     @RequestParam("pageCode") Integer pageCode,
+                     @RequestParam("pageSize") Integer pageSize) {
+        log.info("查询参数信息={}", good);
+        log.info("pageCode={}", pageCode);
+        log.info("pageSize={}", pageSize);
         List<Good> goodList = goodService.list(null);
-        return R.success(ResultEnum.SUCCESS, goodList);
+        return R.create(ResultEnum.SUCCESS, goodList);
     }
 }
 

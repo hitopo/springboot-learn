@@ -79,17 +79,27 @@ var vm = new Vue({
          */
         //刷新列表
         reloadList() {
-            console.log("totalPage:" + this.pageConf.totalPage + ",pageSize:" + this.pageConf.pageSize + ",:pageCode:" + this.pageConf.pageCode);
             this.search(this.pageConf.pageCode, this.pageConf.pageSize);
         },
         //条件查询
         search(pageCode, pageSize) {
             this.loadings();
-            this.$http.post('/goods/findByConPage?pageSize=' + pageSize + '&pageCode=' + pageCode, this.searchEntity).then(result => {
+            this.$http.get('/simple-shop/good/findAll', {
+                params: {
+                    pageCode: pageCode,
+                    pageSize: pageSize,
+                    good: this.searchEntity
+                }
+            }).then(result => {
                 console.log(result);
-                this.goods = result.body.rows;
-                this.pageConf.totalPage = result.body.total;
-                this.loading.close(); //数据更新成功就手动关闭动画
+                if (result.body.code !== 200) {
+                    console.log(result.body.msg);
+                } else {
+                    this.goods = result.body.data;
+                    // TODO:分页查询写死total参数
+                    this.pageConf.totalPage = 10;
+                    this.loading.close(); //数据更新成功就手动关闭动画
+                }
             });
 
         },

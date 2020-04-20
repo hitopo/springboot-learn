@@ -13,9 +13,14 @@ import com.hitopo.entity.User;
 public interface UserService extends IService<User> {
 
     /**
-     * 是否登录成功
+     * 用户登录
      * @param user 用户名和密码数据
-     * @return 是否登录成功
      */
-    boolean login(User user);
+    void login(User user);
+
+    /**
+     * 注册用户
+     * @param user 用户信息
+     */
+    void register(User user);
 }
