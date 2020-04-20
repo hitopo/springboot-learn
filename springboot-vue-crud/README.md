@@ -165,26 +165,11 @@ public enum ResultEnum {
         this.code = code;
         this.msg = msg;
     }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
+	// ..getter、setter..
 }
 ```
 
-为了封装统一的返回值样式，创建出`R.java`固定格式
+为了封装统一的返回json格式，创建出`R.java`固定返回格式，之后凡是需要用到返回json的格式的情况，统一返回R对象
 
 ```java
 public class R {
@@ -228,31 +213,17 @@ public class R {
         return new R(re.getCode(), re.getMsg());
     }
 
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
+   // ..getter、setter..
 }
 ```
+
+
+
+# 用户管理
+
+## 用户登录
+
+用户登录的实现很简单，不细说，重点说一下登录拦截的实现
 
 
 

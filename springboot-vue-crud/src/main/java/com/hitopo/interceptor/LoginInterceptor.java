@@ -1,6 +1,5 @@
 package com.hitopo.interceptor;
 
-import com.hitopo.entity.User;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -24,9 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class LoginInterceptor {
 
-    private Logger log = LoggerFactory.getLogger(LoginInterceptor.class);
+    private final Logger log = LoggerFactory.getLogger(LoginInterceptor.class);
 
-    @Pointcut("within(com.hitopo.controller.GoodController..*)")
+    @Pointcut("within(com.hitopo.controller..*) && !within(com.hitopo.controller.LoginController)")
     public void pointcut() {
     }
 
@@ -34,13 +33,14 @@ public class LoginInterceptor {
     public Object trackInfo(ProceedingJoinPoint joinPoint) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        User user = (User) request.getSession().getAttribute("user");
-        if (user == null) {
+        String username = (String) request.getSession().getAttribute("username");
+        if (username == null) {
             log.info("***************用户未登录***************");
             // 跳转到登录界面
-            attributes.getResponse().sendRedirect("/login");
+            attributes.getResponse().sendRedirect(request.getContextPath() + "/login");
+        } else {
+            log.info("***************用户已登录***************");
         }
-        log.info("***************用户已登录***************");
         return joinPoint.proceed();
     }
 }

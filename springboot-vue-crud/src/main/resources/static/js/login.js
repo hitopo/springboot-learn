@@ -24,7 +24,7 @@ new Vue({
                 if (valid) {
                     //提交表单
                     // TODO:目前不知道怎么在这里面获得simple-shop的项目路径，先硬编码
-                    this.$http.post('/simple-shop/user/login', {
+                    this.$http.post('/simple-shop/login', {
                         username: this.login.username,
                         password: this.login.password,
                     }).then(result => {

@@ -23,10 +23,12 @@ public class HomeController {
 
 
     /**
-     * 跳转到登录界面
+     * 商品列表页
      */
-    @GetMapping("/login")
-    public String login() {
-        return "/home/login";
+    @GetMapping(value = {"/good"})
+    public String user() {
+        return "goods";
     }
+
+
 }
