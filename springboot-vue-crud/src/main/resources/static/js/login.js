@@ -23,14 +23,12 @@ new Vue({
             this.$refs[login].validate((valid) => {
                 if (valid) {
                     //提交表单
-                    // TODO:目前不知道怎么在这里面获得simple-shop的项目路径，先硬编码
                     this.$http.post('/simple-shop/login', {
                         username: this.login.username,
                         password: this.login.password,
                     }).then(result => {
                         if (result.body.code === 200) {
                             // 登录成功，跳转到首页
-                            // TODO: 硬编码contextPath
                             window.location.href = "/simple-shop/index";
                         } else {
                             // 弹出错误信息框

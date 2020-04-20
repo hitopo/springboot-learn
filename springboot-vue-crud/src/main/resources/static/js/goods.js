@@ -15,15 +15,16 @@ var vm = new Vue({
                 id: '',
                 title: '',
                 price: '',
-                image: '',
+                imageUrl: '',
                 brand: ''
             }],
 
             //编辑表
             editor: {
+                id: 0,
                 title: '',
                 price: '',
-                image: '',
+                imageUrl: '',
                 brand: ''
             },
             //添加dialog
@@ -55,7 +56,6 @@ var vm = new Vue({
             dialogVisible: false,
             //图片列表（用于回显图片）
             fileList: [{name: '', url: ''}],
-
             activeIndex: '2', //默认激活
         }
     },
@@ -84,20 +84,19 @@ var vm = new Vue({
         //条件查询
         search(pageCode, pageSize) {
             this.loadings();
-            this.$http.get('/simple-shop/good/findAll', {
+            this.$http.get('/simple-shop/good/goods', {
                 params: {
                     pageCode: pageCode,
                     pageSize: pageSize,
-                    good: this.searchEntity
+                    brand: this.searchEntity.brand,
+                    title: this.searchEntity.title
                 }
             }).then(result => {
-                console.log(result);
                 if (result.body.code !== 200) {
                     console.log(result.body.msg);
                 } else {
-                    this.goods = result.body.data;
-                    // TODO:分页查询写死total参数
-                    this.pageConf.totalPage = 10;
+                    this.goods = result.body.data.dataList;
+                    this.pageConf.totalPage = result.body.data.total;
                     this.loading.close(); //数据更新成功就手动关闭动画
                 }
             });
@@ -126,12 +125,12 @@ var vm = new Vue({
             //关闭对话框
             this.showEditor = false;
             //调用更新数据的接口
-            this.$http.post('/goods/update', JSON.stringify(this.editor)).then(result => {
-                if (result.body.success) {
+            this.$http.put('/simple-shop/good/goods/' + this.editor.id, JSON.stringify(this.editor)).then(result => {
+                if (result.body.code === 200) {
                     //更新成功
                     this.$message({
                         type: 'success',
-                        message: result.body.message,
+                        message: result.body.msg,
                         duration: 6000
                     });
                     //刷新列表
@@ -142,7 +141,7 @@ var vm = new Vue({
                     //更新失败
                     this.$message({
                         type: 'warning',
-                        message: result.body.message,
+                        message: result.body.msg,
                         duration: 6000
                     });
                     //刷新列表
@@ -153,20 +152,20 @@ var vm = new Vue({
         },
         //删除
         sureDelete(ids) {
-            this.$confirm('你确定永久删除此用户信息？', '提示', {
+            this.$confirm('你确定永久删除商品信息？', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning',
                 center: true
             }).then(() => {
                 //调用删除的接口(这里必须将数据转换成JSON格式，不然接收不到值，并且后端要用@RequestBody注解标识)
-                this.$http.post('/goods/delete', JSON.stringify(ids)).then(result => {
-                    if (result.body.success) {
+                this.$http.post('/simple-shop/good/goods/delete', JSON.stringify(ids)).then(result => {
+                    if (result.body.code === 204) {
                         //删除成功
                         this.selectIds = []; //清空选项
                         this.$message({
                             type: 'success',
-                            message: result.body.message,
+                            message: result.body.msg,
                             duration: 6000
                         });
                         //刷新列表
@@ -182,7 +181,7 @@ var vm = new Vue({
                         this.selectIds = []; //清空选项
                         this.$message({
                             type: 'warning',
-                            message: result.body.message,
+                            message: result.body.msg,
                             duration: 6000
                         });
                         //刷新列表
@@ -197,7 +196,6 @@ var vm = new Vue({
                 });
             });
         },
-
         //添加
         save(editor) {
             this.$refs[editor].validate((valid) => {
@@ -205,12 +203,12 @@ var vm = new Vue({
                     //关闭dialog
                     this.showSave = false;
                     //调用保存的接口
-                    this.$http.post('/goods/create', JSON.stringify(this.editor)).then(result => {
-                        if (result.body.success) {
+                    this.$http.post('/simple-shop/good/goods', JSON.stringify(this.editor)).then(result => {
+                        if (result.body.code === 201) {
                             //保存成功
                             this.$message({
                                 type: 'success',
-                                message: result.body.message,
+                                message: result.body.msg,
                                 duration: 6000
                             });
                             //刷新表格
@@ -223,7 +221,7 @@ var vm = new Vue({
                                 'save',
                                 this.$message({
                                     type: 'warning',
-                                    message: result.body.message,
+                                    message: result.body.msg,
                                     duration: 6000
                                 }),
                             );
@@ -237,7 +235,7 @@ var vm = new Vue({
                     this.$emit(
                         'save',
                         this.$message({
-                            message: '输入信息有误！',
+                            message: '请完善信息之后再添加！',
                             type: 'warning',
                             duration: 6000
                         }),
@@ -246,11 +244,7 @@ var vm = new Vue({
                 }
             });
         },
-
-        /**
-         * Private method
-         */
-        //新增按钮
+        // 点击新增按钮
         saveBtn() {
             //打开新增dialog
             this.showSave = true;
@@ -261,60 +255,36 @@ var vm = new Vue({
                 this.$refs['editor'].resetFields(); //经查询：可能是由于对象还没有生成，导致误读了空对象而报错
             }
         },
-        //更新按钮（表格）
+        //点击了编辑按钮
         handleEdit(id) {
             //打开dialog
             this.showEditor = true;
             this.editor = {}; //清空表单
             //查询当前id对应的数据
-            this.$http.post('/goods/findById', {id: id}).then(result => {
-                this.fileList.forEach(row => {
-                    row.url = result.body[0].image; //将图片的URL地址赋值给file-list展示出来
-                });
-                this.editor = result.body[0];
-                //移除element-ui表单校验残留
-                this.$refs['editor'].resetFields();
-            });
-
-            console.log(this.editor);
-            console.log(this.fileList);
-        },
-        //更新按钮（checkbox）
-        editSelect() {
-            if (this.multipleSelection.length === 1) {
-                this.multipleSelection.forEach(row => {
-                    console.log(row);
-                    this.editor = {}; //先清空数据
-                    this.editor = row; //再赋值
-                    this.fileList.forEach(file => {
-                        file.url = row.image; //将图片的URL地址赋值给file-list展示出来
+            this.$http.get(`/simple-shop/good/goods/${id}`).then(result => {
+                if (result.body.code !== 200) {
+                    this.$message({
+                        message: '获取信息失败',
+                        type: 'error',
+                        duration: 6000
+                    })
+                } else {
+                    this.fileList.forEach(row => {
+                        row.url = result.body.data.imageUrl; //将图片的URL地址赋值给file-list展示出来
                     });
+                    this.editor = result.body.data;
                     //移除element-ui表单校验残留
                     this.$refs['editor'].resetFields();
-                    this.showEditor = true; //打开对话框
-                });
-            } else if (this.multipleSelection.length > 1) {
-                //只能选择一个进行编辑
-                this.$message({
-                    type: 'info',
-                    message: '请选择任一个进行编辑',
-                    duration: 6000
-                });
-            } else {
-                this.$message({
-                    type: 'info',
-                    message: '请至少选择一个进行编辑',
-                    duration: 6000
-                })
-            }
+                }
+            });
         },
         //删除按钮
         handleDelete(id) {
-            var ids = new Array();
+            var ids = [];
             ids.push(id);
             this.sureDelete(ids);
         },
-        //批量删除按钮（checkbox）
+        //批量删除按钮
         deleteSelect(rows) {
             if (rows) {
                 rows.forEach(row => {
@@ -327,13 +297,6 @@ var vm = new Vue({
                 this.$refs.goods.clearSelection();
             }
         },
-
-        /**
-         * 图片上传
-         * @param res
-         * @param file
-         * @param fileList
-         */
         //文件上传成功的钩子函数
         handleSuccess(res, file, fileList) {
             this.$message({
@@ -341,24 +304,16 @@ var vm = new Vue({
                 message: '图片上传成功',
                 duration: 6000
             });
-            if (file.response.success) {
-                this.editor.image = file.response.message; //将返回的文件储存路径赋值image字段
-            }
+            this.editor.imageUrl = file.response.data.url; //将返回的图片访问url地址赋值imageUrl字段
+            console.log(this.editor.imageUrl);
         },
         //删除文件之前的钩子函数
         handleRemove(file, fileList) {
-            console.log(file, fileList);
             this.$message({
                 type: 'info',
                 message: '已删除原有图片',
                 duration: 6000
             });
-        },
-        //点击列表中已上传的文件事的钩子函数
-        handlePreview(file) {
-            // this.dialogImageUrl = file.url;
-            // this.dialogVisible = true;
-
         },
         //上传的文件个数超出设定时触发的函数
         onExceed(files, fileList) {
@@ -368,7 +323,6 @@ var vm = new Vue({
                 duration: 6000
             });
         },
-        //文件上传前的前的钩子函数
         //参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
         beforeUpload(file) {
             const isJPG = file.type === 'image/jpeg';
@@ -385,13 +339,15 @@ var vm = new Vue({
             }
             return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
         },
-
+        //点击清除按钮
+        clear() {
+            this.searchEntity = {};
+            this.search(this.pageConf.pageCode, this.pageConf.pageSize);
+        }
     },
-
     // 生命周期函数
     created() {
         this.search(this.pageConf.pageCode, this.pageConf.pageSize);
         this.loadings(); //加载动画
-    },
-
+    }
 });

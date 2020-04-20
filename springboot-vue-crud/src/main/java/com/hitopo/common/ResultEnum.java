@@ -19,7 +19,11 @@ public enum ResultEnum {
     // 自定义返回的错误格式
     // 用户部分
     NOT_EXIST_USER_OR_ERROR_PASSWORD(10001, "用户名或者密码错误！"),
-    USERNAME_ALREADY_EXIST(10002, "用户名已经存在！");
+    USERNAME_ALREADY_EXIST(10002, "用户名已经存在！"),
+
+    // 文件上传部分
+    FILE_IS_EMPTY(20001, "上传的文件不能为空！"),
+    FILE_UPLOAD_ERROR(20002, "文件上传失败！");
 
 
     /**

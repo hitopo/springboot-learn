@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hitopo.common.ResultEnum;
 import com.hitopo.entity.User;
-import com.hitopo.exception.UserException;
+import com.hitopo.exception.CustomizedException;
 import com.hitopo.mapper.UserMapper;
 import com.hitopo.service.UserService;
 import com.hitopo.util.PasswordUtil;
@@ -27,7 +27,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .eq("username", user.getUsername())
                 .eq("password", encryptedPassword));
         if (loginUser == null) {
-            throw new UserException(ResultEnum.NOT_EXIST_USER_OR_ERROR_PASSWORD);
+            throw new CustomizedException(ResultEnum.NOT_EXIST_USER_OR_ERROR_PASSWORD);
         }
     }
 
@@ -37,7 +37,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User dbUser = baseMapper.selectOne(new QueryWrapper<User>().eq("username", username));
         if (dbUser != null) {
             // 用户名已经存在
-            throw new UserException(ResultEnum.USERNAME_ALREADY_EXIST);
+            throw new CustomizedException(ResultEnum.USERNAME_ALREADY_EXIST);
         }
         // 保存数据，记得密码要加密
         user.setPassword(PasswordUtil.encryptPassword(user.getPassword()));

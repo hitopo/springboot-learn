@@ -3,6 +3,9 @@ server:
   servlet:
     context-path: /simple-shop
 
+  tomcat:
+    basedir: C:\Users\Administrator\Desktop\springboot-learn\springboot-vue-crud
+
 
 spring:
   datasource:

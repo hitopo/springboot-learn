@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>商品界面</title>
     <link rel="stylesheet" th:href="@{/lib/element-ui/lib/theme-chalk/index.css}"/>
     <link rel="stylesheet" th:href="@{/lib/font/css/font-awesome.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/goods.css}"/>
@@ -49,7 +49,7 @@
                         </el-button>
                         <el-button
                                 icon="el-icon-delete"
-                                @click="searchEntity={}"
+                                @click="clear"
                                 type="primary" plain>清空
                         </el-button>
                     </el-form-item>
@@ -58,8 +58,8 @@
                 <div>
                     <el-row>
                         <el-button @click="saveBtn" type="primary" icon="el-icon-plus">新增</el-button>
-                        <el-button type="primary" plain icon="el-icon-edit" @click="editSelect">编辑</el-button>
-                        <el-button type="danger" plain icon="el-icon-delete" @click="deleteSelect(multipleSelection)">删除
+                        <el-button type="danger" plain icon="el-icon-delete" @click="deleteSelect(multipleSelection)">
+                            批量删除
                         </el-button>
                         <el-button icon="el-icon-refresh"
                                    @click="search(pageConf.pageCode,pageConf.pageSize)">刷新
@@ -87,7 +87,7 @@
                             ref="selection"
                             align="center"
                             type="selection"
-                            width="55">
+                            width="50">
                     </el-table-column>
                     <el-table-column
                             prop="id"
@@ -108,7 +108,7 @@
                             align="center"
                             prop="brand"
                             label="商品品牌"
-                            width="150">
+                            width="120">
                     </el-table-column>
                     <el-table-column
                             align="center"
@@ -119,24 +119,19 @@
                             show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column align="center" label="商品图片" width="240">
-                        <template scope="scope">
-                            <img :src="scope.row.image" class="image" width="150" height="160"/>
+                        <template slot-scope="scope">
+                            <img :src="scope.row.imageUrl" class="image" width="150" height="160"/>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" align="center" fixed="right">
                         <template slot-scope="scope">
                             <el-button
-                                    size="mini"
-                                    type="danger"
-                                    @click="handleDelete(scope.row.id)">删除
-                            </el-button>
-                            <el-button
-                                    size="mini"
+                                    type="primary"
                                     @click="handleEdit(scope.row.id)">编辑
                             </el-button>
                             <el-button
-                                    size="mini"
-                                    type="primary" plain>权限
+                                    type="danger"
+                                    @click="handleDelete(scope.row.id)">删除
                             </el-button>
                         </template>
                     </el-table-column>
@@ -183,7 +178,7 @@
     </div>
 
     <!-- 新增按钮的dialog -->
-    <el-dialog title="添加信息" :visible.sync="showSave" width="30%" :close-on-click-modal="false"
+    <el-dialog title="添加信息" :visible.sync="showSave" width="50%" :close-on-click-modal="false"
                :close-on-press-escape="false">
         <el-form class="editor-form" :model="editor" status-icon ref="editor"
                  label-width="100px">
@@ -200,7 +195,7 @@
             <el-form-item prop="picture" label="图片">
                 <el-upload
                         ref="upload"
-                        action="/upload"
+                        action="/simple-shop/upload"
                         multiple
                         name="picture"
                         list-type="picture-card"
@@ -208,7 +203,6 @@
                         :on-exceed="onExceed"
                         :file-list="fileList"
                         :before-upload="beforeUpload"
-                        :on-preview="handlePreview"
                         :on-success="handleSuccess"
                         :on-remove="handleRemove">
                     <i class="el-icon-plus"></i>
@@ -230,7 +224,7 @@
     </el-dialog>
 
     <!-- 编辑按钮的dialog -->
-    <el-dialog title="编辑信息" :visible.sync="showEditor" width="30%" :close-on-click-modal="false"
+    <el-dialog title="编辑信息" :visible.sync="showEditor" width="50%" :close-on-click-modal="false"
                :close-on-press-escape="false">
         <el-form class="editor-form" :model="editor" status-icon ref="editor"
                  label-width="100px">
@@ -247,7 +241,7 @@
             <el-form-item prop="picture" label="图片">
                 <el-upload
                         ref="upload"
-                        action="/upload"
+                        action="/simple-shop/upload"
                         multiple
                         name="picture"
                         list-type="picture-card"
@@ -255,7 +249,6 @@
                         :on-exceed="onExceed"
                         :file-list="fileList"
                         :before-upload="beforeUpload"
-                        :on-preview="handlePreview"
                         :on-success="handleSuccess"
                         :on-remove="handleRemove">
                     <i class="el-icon-plus"></i>

@@ -2,7 +2,7 @@ package com.hitopo.handler;
 
 import com.hitopo.common.R;
 import com.hitopo.common.ResultEnum;
-import com.hitopo.exception.UserException;
+import com.hitopo.exception.CustomizedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,8 +20,8 @@ public class MyExceptionHandler {
      * 处理用户异常
      * @param e 用户异常
      */
-    @ExceptionHandler(UserException.class)
-    public R handleUserException(UserException e) {
+    @ExceptionHandler(CustomizedException.class)
+    public R handleUserException(CustomizedException e) {
         // 封装异常信息成R
         return R.create(e.getCode(), e.getMessage());
     }

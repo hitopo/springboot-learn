@@ -264,6 +264,27 @@ public class LoginInterceptor {
 
 
 
+# 商品管理
+
+## 商品分页查询
+
+查询的格式是：
+
+```json
+{
+	"code":200,
+    "msg":"请求成功",
+    "data":{
+        total:55
+		dataList:{}
+    }
+}
+```
+
+
+
+
+
 
 
 

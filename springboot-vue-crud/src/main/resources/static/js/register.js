@@ -30,7 +30,6 @@ new Vue({
                 this.$refs[register].validate((valid) => {
                     if (valid) {
                         //提交表单
-                        // TODO：contextPath
                         this.$http.post('/simple-shop/register', {
                             username: this.register.username,
                             password: this.register.password,
