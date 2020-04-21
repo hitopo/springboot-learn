@@ -18,7 +18,7 @@ public class MyExceptionHandler {
 
     /**
      * 处理用户异常
-     * @param e 用户异常
+     * @param e 自定义异常
      */
     @ExceptionHandler(CustomizedException.class)
     public R handleUserException(CustomizedException e) {
